@@ -10,13 +10,15 @@ public class GitHubClient {
 
     private final WebClient webClient;
 
-    public GitHubClient(WebClient webClient) {
-        this.webClient = webClient;
+    public GitHubClient(WebClient.Builder builder) {
+        this.webClient = builder
+                .baseUrl("https://api.github.com")
+                .build();
     }
 
     public Flux<GitHubRepoDto> getRepositories(String username) {
         return webClient.get()
-                .uri("/users/{username}/repos?per_page=100", username)
+                .uri("/users/{username}/repos", username)
                 .retrieve()
                 .bodyToFlux(GitHubRepoDto.class);
     }

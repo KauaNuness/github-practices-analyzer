@@ -7,30 +7,36 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class MetricCalculator {
+public final class MetricCalculator {
 
-    private MetricCalculator(){}
+    private MetricCalculator() {
+    }
 
-    public static MetricSnapshot calculare(List<GitHubRepoDto> repos) {
+    public static MetricSnapshot calculate(List<GitHubRepoDto> repos) {
 
-        int total = repos.size();
-        int withReadme = (int) repos.stream()
+        int totalRepositories = repos.size();
+
+        int repositoriesWithReadme = (int) repos.stream()
                 .filter(r -> r.getDescription() != null && !r.getDescription().isBlank())
                 .count();
 
-        double abandonmentRate = repos.stream()
-                .filter(r -> Duration.between(
-                        r.getUpdatedAt(), Instant.now()).toDays() > 100)
-                .count()/(double) Math.max(total, 1);
+        double repositoryAbandonmentRate = repos.stream()
+                .filter(r ->
+                        Duration.between(r.getUpdatedAt(), Instant.now()).toDays() > 100
+                )
+                .count() / (double) Math.max(totalRepositories, 1);
 
-        return MetricSnapshot.builder()
-                .totalRepositories(total)
-                .repositoriesWithReadme(withReadme)
-                .repositoryAbandonmentRate(abandonmentRate)
-                .averageCommitsPerWeek(0.0) // evolui depois
-                .averageDaysBetweenCommits(30.0) // placeholder calculável
-                .meaningfulCommitMessages(false)
-                .build();
+        double averageCommitsPerWeek = 0.0;
+        double averageDaysBetweenCommits = 30.0;
+        double meaningfulCommitRatio = 0.0;
+
+        return new MetricSnapshot(
+                totalRepositories,
+                repositoriesWithReadme,
+                averageCommitsPerWeek,
+                averageDaysBetweenCommits,
+                repositoryAbandonmentRate,
+                meaningfulCommitRatio
+        );
     }
-
 }
