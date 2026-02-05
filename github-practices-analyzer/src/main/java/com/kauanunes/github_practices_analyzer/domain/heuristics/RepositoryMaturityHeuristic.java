@@ -1,4 +1,4 @@
 package com.kauanunes.github_practices_analyzer.domain.heuristics;
 
-public class RepositoryMaturityHeuristic implements Heuristic{
+public abstract class RepositoryMaturityHeuristic implements Heuristic{
 }
