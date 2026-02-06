@@ -9,15 +9,13 @@ public class RepositoryMaturityHeuristic implements Heuristic {
     @Override
     public void analyze(AnalysisContext context) {
 
-        if (!context.metrics().hasRepositories()) {
-            return;
-        }
+        double abandonment = context.metrics().abandonmentRate();
 
-        if (context.metrics().getRepositoryAbandonmentRate() > 0.6) {
+        if (abandonment > 0.6) {
             context.recommend(
                     "Alta taxa de repositórios abandonados",
-                    "Muitos projetos não recebem manutenção após criação.",
-                    "Arquive projetos antigos ou documente o estado atual deles."
+                    "Muitos projetos não recebem atualizações há meses.",
+                    "Arquive projetos antigos ou documente seu estado atual."
             );
         } else {
             context.strength(

@@ -1,6 +1,7 @@
 package com.kauanunes.github_practices_analyzer.infrastructure.github.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 
 public class GitHubRepoDto {
@@ -12,9 +13,6 @@ public class GitHubRepoDto {
     private Instant updatedAt;
 
     private boolean fork;
-
-    public GitHubRepoDto() {
-    }
 
     public String getName() {
         return name;
@@ -30,21 +28,5 @@ public class GitHubRepoDto {
 
     public boolean isFork() {
         return fork;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setFork(boolean fork) {
-        this.fork = fork;
     }
 }

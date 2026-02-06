@@ -5,6 +5,7 @@ import com.kauanunes.github_practices_analyzer.infrastructure.github.dto.GitHubR
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 public final class MetricCalculator {
@@ -29,20 +30,26 @@ public final class MetricCalculator {
                 )
                 .count() / (double) total;
 
-        // IMPORTANTE NÃO é commit frequency
-        // É tempo médio desde última atualização
-        double avgDaysSinceLastUpdate = repos.stream()
+        List<Instant> updates = repos.stream()
                 .map(GitHubRepoDto::getUpdatedAt)
-                .map(updatedAt -> Duration.between(updatedAt, Instant.now()).toDays())
-                .mapToLong(Long::longValue)
-                .average()
-                .orElse(Double.NaN);
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        Double avgDaysBetweenUpdates = null;
+
+        if (updates.size() > 1) {
+            long totalDays = 0;
+            for (int i = 0; i < updates.size() - 1; i++) {
+                totalDays += Duration.between(updates.get(i + 1), updates.get(i)).toDays();
+            }
+            avgDaysBetweenUpdates = totalDays / (double) (updates.size() - 1);
+        }
 
         return new MetricSnapshot(
                 total,
                 withReadme,
                 abandonmentRate,
-                avgDaysSinceLastUpdate
+                avgDaysBetweenUpdates
         );
     }
 }

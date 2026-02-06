@@ -9,22 +9,20 @@ public class CommitBehaviorHeuristic implements Heuristic {
     @Override
     public void analyze(AnalysisContext context) {
 
-        if (!context.metrics().hasCommitHistoryMetrics()) {
-            return;
-        }
+        if (!context.metrics().hasCommitHistoryMetrics()) return;
 
-        double avgDays = context.metrics().getAverageDaysBetweenCommits();
+        double avgDays = context.metrics().avgDaysBetweenUpdates();
 
-        if (avgDays > 21) {
+        if (avgDays > 30) {
             context.recommend(
                     "Commits muito espaçados",
-                    "O intervalo médio entre commits indica ciclos longos de desenvolvimento.",
-                    "Considere dividir entregas em mudanças menores e mais frequentes."
+                    "Os repositórios apresentam longos intervalos entre atualizações.",
+                    "Considere dividir mudanças em entregas menores e frequentes."
             );
         } else {
             context.strength(
-                    "Boa cadência de commits",
-                    "Os commits são frequentes e bem distribuídos ao longo do tempo."
+                    "Boa cadência de atualizações",
+                    "Os projetos recebem atualizações de forma consistente."
             );
         }
     }

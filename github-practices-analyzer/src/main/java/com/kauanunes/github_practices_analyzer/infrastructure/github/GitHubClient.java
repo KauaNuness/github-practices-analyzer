@@ -3,6 +3,7 @@ package com.kauanunes.github_practices_analyzer.infrastructure.github;
 import com.kauanunes.github_practices_analyzer.infrastructure.github.dto.GitHubRepoDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 
 @Component
@@ -20,6 +21,9 @@ public class GitHubClient {
                 .retrieve()
                 .bodyToFlux(GitHubRepoDto.class)
                 .filter(repo -> !repo.isFork())
-                .filter(repo -> repo.getUpdatedAt() != null);
+                .filter(repo -> repo.getUpdatedAt() != null)
+                .onErrorResume(WebClientResponseException.Forbidden.class, e ->
+                        Flux.empty() // ← ESSENCIAL
+                );
     }
 }

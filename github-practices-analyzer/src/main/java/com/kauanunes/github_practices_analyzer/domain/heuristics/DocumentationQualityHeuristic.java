@@ -9,25 +9,20 @@ public class DocumentationQualityHeuristic implements Heuristic {
     @Override
     public void analyze(AnalysisContext context) {
 
-        int total = context.metrics().getTotalRepositories();
+        if (context.metrics().totalRepositories() == 0) return;
 
-        if (total == 0) {
-            return;
-        }
+        double coverage = context.metrics().readmeCoverage();
 
-        int documented = context.metrics().getRepositoriesWithReadme();
-        double ratio = (double) documented / total;
-
-        if (ratio < 0.5) {
-            context.recommend(
-                    "Baixa cobertura de documentação",
-                    "Menos da metade dos repositórios possuem README.",
-                    "Adicione READMEs explicando objetivo, stack e instruções básicas."
-            );
-        } else {
+        if (coverage >= 0.6) {
             context.strength(
                     "Boa cobertura de documentação",
-                    "A maioria dos repositórios possui README com descrição do projeto."
+                    "A maioria dos repositórios possui README ou descrição adequada."
+            );
+        } else {
+            context.recommend(
+                    "Baixa cobertura de documentação",
+                    "Menos da metade dos repositórios possui README.",
+                    "Adicione READMEs explicando objetivo, stack e uso."
             );
         }
     }
