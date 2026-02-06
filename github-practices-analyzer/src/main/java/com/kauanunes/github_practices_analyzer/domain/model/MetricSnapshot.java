@@ -4,25 +4,19 @@ public class MetricSnapshot {
 
     private final int totalRepositories;
     private final int repositoriesWithReadme;
-    private final double averageCommitsPerWeek;
-    private final double averageDaysBetweenCommits;
     private final double repositoryAbandonmentRate;
-    private final double meaningfulCommitRatio;
+    private final Double averageDaysBetweenCommits;
 
     public MetricSnapshot(
             int totalRepositories,
             int repositoriesWithReadme,
-            double averageCommitsPerWeek,
-            double averageDaysBetweenCommits,
             double repositoryAbandonmentRate,
-            double meaningfulCommitRatio
+            Double averageDaysBetweenCommits
     ) {
         this.totalRepositories = totalRepositories;
         this.repositoriesWithReadme = repositoriesWithReadme;
-        this.averageCommitsPerWeek = averageCommitsPerWeek;
-        this.averageDaysBetweenCommits = averageDaysBetweenCommits;
         this.repositoryAbandonmentRate = repositoryAbandonmentRate;
-        this.meaningfulCommitRatio = meaningfulCommitRatio;
+        this.averageDaysBetweenCommits = averageDaysBetweenCommits;
     }
 
     public int getTotalRepositories() {
@@ -33,19 +27,19 @@ public class MetricSnapshot {
         return repositoriesWithReadme;
     }
 
-    public double getAverageCommitsPerWeek() {
-        return averageCommitsPerWeek;
+    public double getRepositoryAbandonmentRate() {
+        return repositoryAbandonmentRate;
     }
 
     public double getAverageDaysBetweenCommits() {
         return averageDaysBetweenCommits;
     }
 
-    public double getRepositoryAbandonmentRate() {
-        return repositoryAbandonmentRate;
+    public boolean hasRepositories() {
+        return totalRepositories > 0;
     }
 
-    public double getMeaningfulCommitRatio() {
-        return meaningfulCommitRatio;
+    public boolean hasCommitHistoryMetrics() {
+        return averageDaysBetweenCommits != null;
     }
 }

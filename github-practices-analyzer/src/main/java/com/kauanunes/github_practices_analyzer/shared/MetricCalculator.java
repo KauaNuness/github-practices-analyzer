@@ -9,34 +9,40 @@ import java.util.List;
 
 public final class MetricCalculator {
 
-    private MetricCalculator() {
-    }
+    private MetricCalculator() {}
 
     public static MetricSnapshot calculate(List<GitHubRepoDto> repos) {
 
-        int totalRepositories = repos.size();
+        int total = repos.size();
 
-        int repositoriesWithReadme = (int) repos.stream()
+        if (total == 0) {
+            return new MetricSnapshot(0, 0, 0.0, null);
+        }
+
+        int withReadme = (int) repos.stream()
                 .filter(r -> r.getDescription() != null && !r.getDescription().isBlank())
                 .count();
 
-        double repositoryAbandonmentRate = repos.stream()
+        double abandonmentRate = repos.stream()
                 .filter(r ->
-                        Duration.between(r.getUpdatedAt(), Instant.now()).toDays() > 100
+                        Duration.between(r.getUpdatedAt(), Instant.now()).toDays() > 180
                 )
-                .count() / (double) Math.max(totalRepositories, 1);
+                .count() / (double) total;
 
-        double averageCommitsPerWeek = 0.0;
-        double averageDaysBetweenCommits = 30.0;
-        double meaningfulCommitRatio = 0.0;
+        // IMPORTANTE NÃO é commit frequency
+        // É tempo médio desde última atualização
+        double avgDaysSinceLastUpdate = repos.stream()
+                .map(GitHubRepoDto::getUpdatedAt)
+                .map(updatedAt -> Duration.between(updatedAt, Instant.now()).toDays())
+                .mapToLong(Long::longValue)
+                .average()
+                .orElse(Double.NaN);
 
         return new MetricSnapshot(
-                totalRepositories,
-                repositoriesWithReadme,
-                averageCommitsPerWeek,
-                averageDaysBetweenCommits,
-                repositoryAbandonmentRate,
-                meaningfulCommitRatio
+                total,
+                withReadme,
+                abandonmentRate,
+                avgDaysSinceLastUpdate
         );
     }
 }

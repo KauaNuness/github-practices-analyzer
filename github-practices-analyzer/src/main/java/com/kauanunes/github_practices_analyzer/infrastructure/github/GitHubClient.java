@@ -10,16 +10,16 @@ public class GitHubClient {
 
     private final WebClient webClient;
 
-    public GitHubClient(WebClient.Builder builder) {
-        this.webClient = builder
-                .baseUrl("https://api.github.com")
-                .build();
+    public GitHubClient(WebClient githubWebClient) {
+        this.webClient = githubWebClient;
     }
 
     public Flux<GitHubRepoDto> getRepositories(String username) {
         return webClient.get()
-                .uri("/users/{username}/repos", username)
+                .uri("/users/{username}/repos?per_page=100", username)
                 .retrieve()
-                .bodyToFlux(GitHubRepoDto.class);
+                .bodyToFlux(GitHubRepoDto.class)
+                .filter(repo -> !repo.isFork())
+                .filter(repo -> repo.getUpdatedAt() != null);
     }
 }
